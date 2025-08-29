@@ -10,8 +10,11 @@ func main() {
 	// Repository (swap this with a DB-backed repo in production)
 	repo := NewMemoryRepo()
 
-	// Seed sample tasks (optional)
-	seed(repo)
+	// Seed sample tasks (only if enabled via env var)
+	if getEnv("SEED_DATA", "false") == "true" {
+		seed(repo)
+		log.Println("✅ Seed data loaded")
+	}
 
 	// Service
 	svc := NewTaskService(repo)
@@ -21,7 +24,7 @@ func main() {
 
 	// Start server
 	addr := ":" + getEnv("PORT", "8080")
-	log.Printf("Task service starting on %s", addr)
+	log.Printf("🚀 Task service starting on %s", addr)
 	log.Fatal(http.ListenAndServe(addr, h.Routes()))
 }
 
